@@ -3,11 +3,16 @@ from PIL import Image
 GRADATIONS = 15 # number of color bands to split image into
 
 # print the size of the gradations arrays to make sure everything is working
-def test_print(gradations_arr):
-    for i in range(GRADATIONS):
-        print 'Bucket #' + str(i) + ': ' + str(len(gradations_arr[i]))
+def print_gradation_buckets(gradations_arr):
+    pixel_count = 0
 
-def main():
+    for i in range(GRADATIONS):
+        print 'Bucket #' + str(i + 1) + ': ' + str(len(gradations_arr[i]))
+        pixel_count += len(gradations_arr[i])
+
+    print 'Total pixel count: ' + str(pixel_count)
+
+def get_gradation_buckets():
     # open grayscale version of image
     img = Image.open("example.png")
     img = img.convert('L') # convert to grayscale
@@ -39,6 +44,8 @@ def main():
             bucket_num = (color - lightest_color) / gradation_size - 1
             gradation_tuples[bucket_num].append((x, y))
 
-    test_print(gradation_tuples)        
+    print_gradation_buckets(gradation_tuples)        
 
-main()
+    return gradation_tuples
+
+get_gradation_buckets()
