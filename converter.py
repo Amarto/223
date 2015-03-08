@@ -1,61 +1,44 @@
 from PIL import Image
 
+GRADATIONS = 15 # number of color bands to split image into
 
-GRADATIONS = 10 # number of color bands to split image into
-
-'''
-def get_max_min_color(im)
-    color_array = im.getcolors()
-    maximum = color_array[0];
-    minimum = color_array[0];
-    for i in color_array
-        if color_array[i] > maximum
-            maximum = color_array[i]
-        if color_array[i] < minimum
-            minimum = color_array[i]
-
-    return (maximum, minimum)
-'''
-
-
-
-#def get_band(min_color, max_color, grayscale_val):
-def get_band(grayscale_val):
-    
-    return grayscale_val / GRADATIONS
-
-# returns 2D grid of numbers from 0 to GRADATIONS specifying
-# which bucket each color goes into
-def get_pixel_grid(img, width, height):
-    img_grid = []
-    
-    for x in range(0, width):
-        current_array = []
-        img_grid.append(current_array)
-        for y in range(0, height):
-            current_color = get_band(img.getpixel((x, y))) #HERE BROKEN
-            print current_color
-            current_array.append(current_color)          
- # img_grid[x][y] = current_color
-                      
-
-    return img_grid
- 
-def get_buckets(im)
-    (minimum, maximum) = im.getextrema()
-    buckets = []
-    bucket_size = maximum - minimum / GRADATIONS
+# print the size of the gradations arrays to make sure everything is working
+def test_print(gradations_arr):
     for i in range(GRADATIONS):
-        
-        
+        print 'Bucket #' + str(i) + ': ' + str(len(gradations_arr[i]))
 
 def main():
-    im = Image.open("example.png")
-    (width, height) = im.size
-    im = im.convert('L') # convert to grayscale
-    
-    print im.getpixel((0, 0))
-    
-    print get_pixel_grid(im, width, height)
+    # open grayscale version of image
+    img = Image.open("example.png")
+    img = img.convert('L') # convert to grayscale
+
+    # get image data
+    width, height = img.size
+    lightest_color, darkest_color = img.getextrema()
+
+    # returns the different ranges that the colors fall into.
+    # each index in range array has the integer value of the darkest color 
+    # hue in that bucket.
+    gradation_size = (darkest_color - lightest_color) / GRADATIONS
+     
+    gradations = []
+    for i in range(1, GRADATIONS):
+        gradations.append(lightest_color + (i * gradation_size))
+
+
+    # create empty list of buckets
+    gradation_tuples = []
+    for i in range(GRADATIONS):
+        gradation_tuples.append([])
+     
+    # put the coordinate tuple (x, y) of each pixel into the correct bucket
+    # based on color of pixel
+    for x in range(width):
+        for y in range(0, height):
+            color = img.getpixel((x, y))
+            bucket_num = (color - lightest_color) / gradation_size - 1
+            gradation_tuples[bucket_num].append((x, y))
+
+    test_print(gradation_tuples)        
 
 main()
