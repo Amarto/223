@@ -12,9 +12,9 @@ def print_gradation_buckets(gradations_arr):
 
     print 'Total pixel count: ' + str(pixel_count)
 
-def get_gradation_buckets():
+def get_gradation_buckets(image_name):
     # open grayscale version of image
-    img = Image.open("example.png")
+    img = Image.open(image_name)
     img = img.convert('L') # convert to grayscale
 
     # get image data
@@ -44,8 +44,4 @@ def get_gradation_buckets():
             bucket_num = (color - lightest_color) / gradation_size - 1
             gradation_tuples[bucket_num].append((x, y))
 
-    print_gradation_buckets(gradation_tuples)        
-
     return gradation_tuples
-
-get_gradation_buckets()
